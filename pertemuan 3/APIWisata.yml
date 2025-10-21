@@ -1,0 +1,157 @@
+openapi: "3.0.2"
+info:
+  title: API Wisata
+  description: API untuk mengelola data wisata seperti destinasi, ulasan, dan rekomendasi wisata.
+  version: "1.0.0"
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Admin API Wisata
+    email: admin@wisata.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: https://api.wisata.com/v1
+    description: production server
+  - url: https://api-staging.wisata.com/v1
+    description: staging server
+
+tags:
+  - name: destinasi
+    description: Endpoint terkait dengan pengelolaan destinasi wisata
+  - name: ulasan
+    description: Endpoint untuk mengelola ulasan dari pengguna
+  - name: rekomendasi
+    description: Endpoint untuk mendapatkan rekomendasi wisata
+
+paths:
+  /destinasi:
+    get:
+      tags:
+        - destinasi
+      summary: Mendapatkan daftar destinasi wisata
+      description: Mengambil semua destinasi wisata yang terdaftar
+      operationId: getDestinasi
+      responses:
+        '200':
+          description: Daftar destinasi berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Destinasi'
+        '500':
+          description: Kesalahan server
+
+    post:
+      tags:
+        - destinasi
+      summary: Menambahkan destinasi wisata baru
+      description: Menambah destinasi baru ke dalam daftar
+      operationId: addDestinasi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinasiInput'
+      responses:
+        '201':
+          description: Destinasi berhasil ditambahkan
+        '400':
+          description: Data tidak valid
+
+  /destinasi/{id}:
+    get:
+      tags:
+        - destinasi
+      summary: Mendapatkan detail destinasi
+      description: Mendapatkan informasi detail destinasi wisata berdasarkan ID
+      operationId: getDestinasiById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID destinasi
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detail destinasi berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Destinasi'
+        '404':
+          description: Destinasi tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+    put:
+      tags:
+        - destinasi
+      summary: Memperbarui data destinasi wisata
+      description: Memperbarui data destinasi berdasarkan ID
+      operationId: updateDestinasi
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID destinasi yang akan diperbarui
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinasiInput'
+      responses:
+        '200':
+          description: Destinasi berhasil diperbarui
+        '400':
+          description: Data tidak valid
+        '404':
+          description: Destinasi tidak ditemukan
+
+    delete:
+      tags:
+        - destinasi
+      summary: Menghapus destinasi wisata
+      description: Menghapus destinasi wisata berdasarkan ID
+      operationId: deleteDestinasi
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID destinasi yang akan dihapus
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Destinasi berhasil dihapus
+
+components:
+  schemas:
+    Destinasi:
+      type: object
+      properties:
+        id:
+          type: string
+        nama:
+          type: string
+        lokasi:
+          type: string
+        deskripsi:
+          type: string
+    DestinasiInput:
+      type: object
+      properties:
+        nama:
+          type: string
+        lokasi:
+          type: string
+        deskripsi:
+          type: string

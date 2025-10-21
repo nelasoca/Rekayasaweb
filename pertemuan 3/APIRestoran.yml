@@ -1,0 +1,164 @@
+openapi: "3.0.2"
+info:
+  title: API Restoran
+  description: API untuk mengelola data menu makanan, ulasan pelanggan, dan rekomendasi hidangan.
+  version: "1.0.0"
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Admin API Restoran
+    email: admin@restoran.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: https://api.restoran.com/v1
+    description: production server
+  - url: https://api-staging.restoran.com/v1
+    description: staging server
+
+tags:
+  - name: menu
+    description: Endpoint untuk pengelolaan data menu makanan dan minuman
+  - name: ulasan
+    description: Endpoint untuk mengelola ulasan pelanggan
+  - name: rekomendasi
+    description: Endpoint untuk mendapatkan rekomendasi menu
+
+paths:
+  /menu:
+    get:
+      tags:
+        - menu
+      summary: Mendapatkan daftar menu
+      description: Mengambil semua menu makanan dan minuman yang tersedia di restoran
+      operationId: getMenu
+      responses:
+        '200':
+          description: Daftar menu berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Menu'
+        '500':
+          description: Kesalahan server
+
+    post:
+      tags:
+        - menu
+      summary: Menambahkan menu baru
+      description: Menambah menu makanan atau minuman baru ke dalam daftar restoran
+      operationId: addMenu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuInput'
+      responses:
+        '201':
+          description: Menu berhasil ditambahkan
+        '400':
+          description: Data tidak valid
+
+  /menu/{id}:
+    get:
+      tags:
+        - menu
+      summary: Mendapatkan detail menu
+      description: Mendapatkan informasi detail menu berdasarkan ID
+      operationId: getMenuById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID menu
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detail menu berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        '404':
+          description: Menu tidak ditemukan
+        '500':
+          description: Kesalahan server
+
+    put:
+      tags:
+        - menu
+      summary: Memperbarui data menu
+      description: Memperbarui informasi menu makanan atau minuman berdasarkan ID
+      operationId: updateMenu
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID menu yang akan diperbarui
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuInput'
+      responses:
+        '200':
+          description: Menu berhasil diperbarui
+        '400':
+          description: Data tidak valid
+        '404':
+          description: Menu tidak ditemukan
+
+    delete:
+      tags:
+        - menu
+      summary: Menghapus menu
+      description: Menghapus data menu berdasarkan ID
+      operationId: deleteMenu
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID menu yang akan dihapus
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Menu berhasil dihapus
+
+components:
+  schemas:
+    Menu:
+      type: object
+      properties:
+        id:
+          type: string
+        nama:
+          type: string
+        kategori:
+          type: string
+          description: Jenis menu (misalnya makanan utama, minuman, dessert)
+        harga:
+          type: number
+          format: float
+        deskripsi:
+          type: string
+    MenuInput:
+      type: object
+      properties:
+        nama:
+          type: string
+        kategori:
+          type: string
+        harga:
+          type: number
+          format: float
+        deskripsi:
+          type: string
